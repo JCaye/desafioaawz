@@ -19,8 +19,12 @@ selic = selic[1:]
 
 petr4.Data = pd.to_datetime(petr4.Data, infer_datetime_format = True)
 
-##define final dataframe
-data_monthly = pd.DataFrame(columns = ["fech", "volume", "neg", "year", "month"])
+##drop months without selic values or without PETR4 data and drop year and month columns
+data_monthly = ((data_monthly[data_monthly.selic != 0])[data_monthly.volume != 0]).drop(["year", "month"], axis = 1)
+
+##normalize all fields
+for key in data_monthly.keys():
+    data_monthly[key] = (data_monthly[key] - data_monthly[key].min())/(data_monthly[key].max() - data_monthly[key].min())
 
 ##collect data by month average for the closing value and month total for volume and negotiations
 year = 2018
